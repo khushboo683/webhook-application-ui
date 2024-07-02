@@ -1,22 +1,36 @@
 import React, { useState } from 'react';
 import { Box, Container, FormControl, TextField, Button, Typography, Alert } from '@mui/material';
-
+import { headers } from './utils/headers';
+import axios from 'axios';
 export function Register() {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [confirmPassword, setConfirmPassword] = useState('');
   const[alert, setAlert] = useState({});
-  const handleSubmit = (e) => {
+  const handleSubmit = async(e) => {
     e.preventDefault();
     if (password !== confirmPassword) {
       setAlert({severity:"error",message:"Password does not match!"})
-      setTimeout(()=>{
-        setAlert({})
-      },2000)
     } else {
-      // Handle form submission
-      console.log({ email, password, confirmPassword });
+      const response = await axios.post('http://localhost:3000/api/auth/register', 
+      {
+        email,
+        password
+      },
+      {
+        headers
+      }
+    )
+    console.log("response",response);
+    if(response.status===201){
+      setAlert({severity:'success',message:response.data.msg})
+    }else{
+      setAlert({severity:'error',message:'Something went wrong.'})
     }
+    }
+    setTimeout(()=>{
+      setAlert({});
+    },2000)
   };
 
   return (

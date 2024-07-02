@@ -1,30 +1,35 @@
-import React from "react";
+import React, {useEffect, useState} from "react";
 import { Container, Box, Typography} from "@mui/material";
 import { WebhookCard } from "./WebhookCard";
+import { AppHeader } from "./AppBar";
+import axios from 'axios';
+import { headers } from "./utils/headers";
 export function WebhookList(){
-    const webhooks=[
-      {
-        id:'1',
-      },
-      {
-        id:'2',
-      },
-      {
-        id:'3',
-      },
-      {
-        id:'4',
-      }
-    ]
+  const[webhooks,setWebhooks]= useState([])
+    const fetchWebhooks=async()=>{
+      try{
+        const response = await axios.get('http://localhost:3000/api/webhooks/subscriptions',{headers})
+        console.log('response',response)
+        if(response.status===200){
+          setWebhooks(response.data);
+        }
+       }catch(err){
+  
+       }
+    }
+    useEffect(()=>{
+      fetchWebhooks();
+    },[])
     return(
     <Container>
+      <AppHeader/>
     <Box
     sx={
        {
        direction:'flex',
        flexDirection:'column',
        alignItems:'center',
-       marginTop:5,
+       marginTop:10,
        marginBottom:5
       } 
     }
@@ -35,7 +40,7 @@ export function WebhookList(){
     </Box>
     {
         webhooks.map(e=>(
-            <WebhookCard key={e.id} webhook={e}/>
+            <WebhookCard key={e._id} webhook={e}/>
         )
         )
     }
